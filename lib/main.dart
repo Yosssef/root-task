@@ -1,77 +1,71 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:untitled/core/utils/service_locator.dart';
+import 'package:untitled/features/home/cuibt/fetch_data_cubit.dart';
+import 'package:untitled/features/home/data/rops/home_repo_imp.dart';
+import 'core/widget/custoumcard.dart';
 
 void main() {
+  setup(); //DI (injectable-get it) fun
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return BlocProvider(
+      create: (context) => FetchDataCubit(getIt.get<HomeRepoImp>())   //DI (injectable-get it)
+        ..fetchData(),
+      child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: HomeView(),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+class HomeView extends StatelessWidget {
+  const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Container(
-          width: 200,
-          height: 200,
-          
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-              border: Border.all(
-            color: Colors.blue, // Border color
-            width: 3
-                ,           // Border width
-          ),
-          shape: BoxShape.rectangle),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children:[
-              const Text(
-                'You have pushed the button this many times:',
+    return BlocBuilder<FetchDataCubit, FetchDataState>(
+      builder: (context, state) {
+        if (state is FetchDataSuccess) {
+          return SafeArea(
+            child: Scaffold(
+              body: GridView.builder(
+                padding: const EdgeInsets.all(10.0),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // Two items per row
+                  childAspectRatio:
+                      4 / 5.3, // Adjust the aspect ratio as needed
+                  crossAxisSpacing: 15, // Space between columns
+                  mainAxisSpacing: 20, // Space between rows
+                ),
+                itemCount: state.products.length, // Number of items
+                itemBuilder: (context, index) {
+                  return  CustomCard(item: state.products[index],);
+                },
               ),
-              Text(
-                '$_counter',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-            ],
-          ),
-        ),
-      ),
-      );
+            ),
+          );
+        }  else if(state is FetchDataLoading) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }else   {
+          return const Scaffold(
+            body: Center(
+              child: Text("error while loding the data"),
+            ),
+          );
+        }
+      },
+    );
   }
 }
