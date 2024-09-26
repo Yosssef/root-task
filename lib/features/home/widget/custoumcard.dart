@@ -71,20 +71,20 @@ class CustomCard extends StatelessWidget {
                 Row(
                   children: [
                      Text(
-                      item.price.toString(),
+                      "${item.price.toString()}EGP",
                       style: const TextStyle(
-                          fontSize: 17,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
                           color: Colors.black),
                     ),
-                    const Spacer(),
+                    const Spacer(flex: 1,),
                     Stack(
                       alignment: Alignment.center,
                       children: [
                          Text(
-                          (item.price-100).toStringAsFixed(2),
+                          "${(item.price-100).abs().toStringAsFixed(2)}EGP",
                           style: const TextStyle(
-                            fontSize: 17,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: Colors.blueAccent,
                           ),

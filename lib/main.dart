@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:untitled/core/utils/service_locator.dart';
 import 'package:untitled/features/home/cuibt/fetch_data_cubit.dart';
 import 'package:untitled/features/home/data/rops/home_repo_imp.dart';
-import 'core/widget/custoumcard.dart';
+
+import 'features/home/widget/custoumcard.dart';
 
 void main() {
   setup(); //DI (injectable-get it) fun
